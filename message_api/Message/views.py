@@ -1,15 +1,15 @@
 from django.http import Http404
 from django.db.models import Q
-from . serializers import MessageSerializer, MessageSerializerHeder
-from . models import Message
+from .serializers import MessageSerializer, MessageSerializerHeder
+from .models import Message
 from rest_framework import permissions, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 import datetime
 
-class MessagesList(APIView):
 
-    permission_classes = [permissions.IsAuthenticated]
+class MessagesList(APIView):
+    #permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None):
         massages = Message.objects.filter(Q(sender=request.user) | Q(receiver=request.user)).order_by('-creation_date')
@@ -27,12 +27,14 @@ class MessagesList(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class SendMessageList(MessagesList):
 
     def get(self, request, format=None):
         massages = Message.objects.filter(sender=request.user).order_by('-creation_date')
         serializer = MessageSerializerHeder(massages, many=True)
         return Response(data=serializer.data)
+
 
 class ReciveMessageList(MessagesList):
 
@@ -43,15 +45,13 @@ class ReciveMessageList(MessagesList):
 
 
 class MessageDetail(APIView):
-
-    permission_classes = [permissions.IsAuthenticated]
+    #permission_classes = [permissions.IsAuthenticated]
 
     def get_massage(self, pk):
         try:
             return Message.objects.get(pk=pk)
         except:
             raise Http404
-
 
     def get(self, request, pk, format=None):
         massage = self.get_massage(pk)
@@ -65,9 +65,9 @@ class MessageDetail(APIView):
         massage.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-class UnreadMessageList(APIView):
 
-    permission_classes = [permissions.IsAuthenticated]
+class UnreadMessageList(APIView):
+    #permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None):
         massages = Message.objects.filter(receiver=request.user, read=False).order_by('-creation_date')
