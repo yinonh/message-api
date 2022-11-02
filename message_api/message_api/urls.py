@@ -14,8 +14,21 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from rest_framework.urlpatterns import format_suffix_patterns
+from rest_framework.authtoken.views import obtain_auth_token
+from Message import views as massageViwes
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', massageViwes.MessagesList.as_view()),
+    path('sendMassages/', massageViwes.SendMessageList.as_view()),
+    path('reciveMassages/', massageViwes.ReciveMessageList.as_view()),
+    path('unread/', massageViwes.UnreadMessageList.as_view()),
+    path('<int:pk>', massageViwes.MessageDetail.as_view()),
+    path('login/', obtain_auth_token),
+    path('api-auth/', include('rest_framework.urls')),
+
 ]
+
+urlpatterns = format_suffix_patterns(urlpatterns)
