@@ -2,14 +2,15 @@ from django.http import Http404
 from django.db.models import Q
 from .serializers import MessageSerializer, MessageSerializerHeder
 from .models import Message
-from rest_framework import permissions, status
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 import datetime
 
 
+
 class MessagesList(APIView):
-    #permission_classes = [permissions.IsAuthenticated]
+
 
     def get(self, request, format=None):
         massages = Message.objects.filter(Q(sender=request.user) | Q(receiver=request.user)).order_by('-creation_date')
@@ -45,29 +46,30 @@ class ReciveMessageList(MessagesList):
 
 
 class MessageDetail(APIView):
-    #permission_classes = [permissions.IsAuthenticated]
 
-    def get_massage(self, pk):
+    def get_massage(self, request, pk):
         try:
-            return Message.objects.get(pk=pk)
+            msg = Message.objects.get(pk=pk)
+            if msg.receiver == request.user or msg.sender == request.user:
+                return msg
+            raise Http404
         except:
             raise Http404
 
     def get(self, request, pk, format=None):
-        massage = self.get_massage(pk)
+        massage = self.get_massage(request, pk)
         serializer = MessageSerializer(massage)
         massage.read = True
         massage.save()
         return Response(data=serializer.data)
 
     def delete(self, request, pk, format=None):
-        massage = self.get_massage(pk)
+        massage = self.get_massage(request, pk)
         massage.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class UnreadMessageList(APIView):
-    #permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None):
         massages = Message.objects.filter(receiver=request.user, read=False).order_by('-creation_date')
