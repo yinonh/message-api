@@ -6,17 +6,15 @@ from rest_framework import permissions, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 import datetime
-from django.shortcuts import render
 
 
 class MessagesList(APIView):
     #permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None):
-        return render(request, "HomePage.html")
-        # massages = Message.objects.filter(Q(sender=request.user) | Q(receiver=request.user)).order_by('-creation_date')
-        # serializer = MessageSerializerHeder(massages, many=True)
-        # return Response(data=serializer.data)
+        massages = Message.objects.filter(Q(sender=request.user) | Q(receiver=request.user)).order_by('-creation_date')
+        serializer = MessageSerializerHeder(massages, many=True)
+        return Response(data=serializer.data)
 
     def post(self, request, format=None):
         request.data['sender'] = request.user.id
