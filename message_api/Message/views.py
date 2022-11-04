@@ -22,19 +22,19 @@ class MessagesList(APIView):
     @method_decorator(name='get', decorator=swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
-                'receiver', openapi.IN_HEADER,
+                'receiver', openapi.IN_BODY,
                 description=("A unique string value refrence to the user id"),
                 type=openapi.TYPE_NUMBER,
                 required=True
             ),
             openapi.Parameter(
-                'subject', openapi.IN_HEADER,
+                'subject', openapi.IN_BODY,
                 description=("string as the message subject"),
                 type=openapi.TYPE_STRING,
                 required=True
             ),
             openapi.Parameter(
-                'message', openapi.IN_HEADER,
+                'message', openapi.IN_BODY,
                 description=("string as the message content"),
                 type=openapi.TYPE_STRING,
                 required=True
