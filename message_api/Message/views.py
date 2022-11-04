@@ -8,7 +8,7 @@ from rest_framework.response import Response
 import datetime
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-from django.utils.decorators import method_decorator
+from rest_framework.decorators import api_view
 
 
 class MessagesList(APIView):
@@ -19,28 +19,18 @@ class MessagesList(APIView):
         serializer = MessageSerializerHeder(massages, many=True)
         return Response(data=serializer.data)
 
-    @method_decorator(name='get', decorator=swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter(
-                'receiver', openapi.IN_BODY,
-                description=("A unique string value refrence to the user id"),
-                type=openapi.TYPE_NUMBER,
-                required=True
-            ),
-            openapi.Parameter(
-                'subject', openapi.IN_BODY,
-                description=("string as the message subject"),
-                type=openapi.TYPE_STRING,
-                required=True
-            ),
-            openapi.Parameter(
-                'message', openapi.IN_BODY,
-                description=("string as the message content"),
-                type=openapi.TYPE_STRING,
-                required=True
-            ),
-        ]
-    ))
+    @swagger_auto_schema(methods=['post'],
+                         request_body=openapi.Schema(
+                             type=openapi.TYPE_OBJECT,
+                             required=['receiver', 'subject', 'message'],
+                             properties={
+                                 'receiver': openapi.Schema(type=openapi.TYPE_NUMBER),
+                                 'subject': openapi.Schema(type=openapi.TYPE_STRING),
+                                 'message': openapi.Schema(type=openapi.TYPE_STRING)
+                             },
+                         ),
+                         operation_description='Uninstall a version of Site')
+    @api_view(['POST'])
     def post(self, request, format=None):
         request.data['sender'] = request.user.id
         request.data['creation_date'] = datetime.date.today()
