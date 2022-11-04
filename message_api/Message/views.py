@@ -6,7 +6,9 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 import datetime
-
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+from django.utils.decorators import method_decorator
 
 
 class MessagesList(APIView):
@@ -17,6 +19,28 @@ class MessagesList(APIView):
         serializer = MessageSerializerHeder(massages, many=True)
         return Response(data=serializer.data)
 
+    @method_decorator(name='get', decorator=swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'receiver', openapi.IN_HEADER,
+                description=("A unique string value refrence to the user id"),
+                type=openapi.TYPE_NUMBER,
+                required=True
+            ),
+            openapi.Parameter(
+                'subject', openapi.IN_HEADER,
+                description=("string as the message subject"),
+                type=openapi.TYPE_STRING,
+                required=True
+            ),
+            openapi.Parameter(
+                'message', openapi.IN_HEADER,
+                description=("string as the message content"),
+                type=openapi.TYPE_STRING,
+                required=True
+            ),
+        ]
+    ))
     def post(self, request, format=None):
         request.data['sender'] = request.user.id
         request.data['creation_date'] = datetime.date.today()

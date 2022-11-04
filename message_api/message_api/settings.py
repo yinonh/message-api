@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'Message.apps.MessageConfig',
     'rest_framework.authtoken',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
