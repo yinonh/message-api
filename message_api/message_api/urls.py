@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.authtoken.views import obtain_auth_token
-from .views import RegisterView
+from .views import RegisterView, UserDetail
 from rest_framework.urlpatterns import format_suffix_patterns
 
 from drf_yasg import openapi
@@ -23,6 +23,8 @@ urlpatterns = [
     path('register/', RegisterView.as_view(), name='auth_register'),
     path('doc/', schema_view.with_ui('swagger', cache_timeout=0)),
     path('', include('Message.urls')),
+    path('<str:username>', UserDetail.as_view()),
+
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
