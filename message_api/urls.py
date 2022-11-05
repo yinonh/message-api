@@ -17,13 +17,13 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls, name='admin_panel'),
     path('api-auth/', include('rest_framework.urls')),
-    path('login/', obtain_auth_token),
+    path('login/', obtain_auth_token, name='login'),
     path('register/', RegisterView.as_view(), name='auth_register'),
-    path('doc/', schema_view.with_ui('swagger', cache_timeout=0)),
+    path('doc/', schema_view.with_ui('swagger', cache_timeout=0), name='documentation'),
     path('', include('Message.urls')),
-    path('<str:username>', UserDetail.as_view()),
+    path('<str:username>', UserDetail.as_view(), name='user_detail'),
 
 ]
 
