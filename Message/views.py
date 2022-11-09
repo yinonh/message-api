@@ -1,6 +1,6 @@
 from django.http import Http404
 from django.db.models import Q
-from .serializers import MessageSerializer, MessageSerializerHeder
+from .serializers import MessageSerializer, MessageSerializerHeader
 from .models import Message
 from rest_framework import status
 from rest_framework.views import APIView
@@ -15,18 +15,18 @@ from rest_framework import permissions
 class MessagesList(APIView):
 
     @swagger_auto_schema(
-        query_serializer=MessageSerializerHeder,
+        query_serializer=MessageSerializerHeader,
         responses={
-            '200': openapi.Response('Json of all the messages', MessageSerializerHeder),
+            '200': openapi.Response('Json of all the messages', MessageSerializerHeader),
             '400': 'Bad Request'
         },
         permission_classes=[permissions.IsAuthenticated],
     operation_id='Masseges list',
-        operation_description='All the sended and received messages for the current authenticated user',
+        operation_description='All the sent and received messages for the current authenticated user',
     )
     def get(self, request, format=None):
         massages = Message.objects.filter(Q(sender=request.user) | Q(receiver=request.user)).order_by('-creation_date')
-        serializer = MessageSerializerHeder(massages, many=True)
+        serializer = MessageSerializerHeader(massages, many=True)
         return Response(data=serializer.data)
 
     @swagger_auto_schema(methods=['post'],
@@ -61,27 +61,27 @@ class MessagesList(APIView):
 class SendMessageList(MessagesList):
 
     @swagger_auto_schema(
-        query_serializer=MessageSerializerHeder,
+        query_serializer=MessageSerializerHeader,
         responses={
-            '200': openapi.Response('Json of all the sended messages', MessageSerializerHeder),
+            '200': openapi.Response('Json of all the sent messages', MessageSerializerHeader),
             '400': 'Bad Request'
         },
         permission_classes=[permissions.IsAuthenticated],
-        operation_id='Sended messages list',
-        operation_description='List of all the messages sended by the user',
+        operation_id='Sent messages list',
+        operation_description='List of all the messages sent by the user',
     )
     def get(self, request, format=None):
         massages = Message.objects.filter(sender=request.user).order_by('-creation_date')
-        serializer = MessageSerializerHeder(massages, many=True)
+        serializer = MessageSerializerHeader(massages, many=True)
         return Response(data=serializer.data)
 
 
 class ReceiveMessageList(MessagesList):
 
     @swagger_auto_schema(
-        query_serializer=MessageSerializerHeder,
+        query_serializer=MessageSerializerHeader,
         responses={
-            '200': openapi.Response('Json of all the received messages', MessageSerializerHeder),
+            '200': openapi.Response('Json of all the received messages', MessageSerializerHeader),
             '400': 'Bad Request'
         },
         permission_classes=[permissions.IsAuthenticated],
@@ -90,7 +90,7 @@ class ReceiveMessageList(MessagesList):
     )
     def get(self, request, format=None):
         massages = Message.objects.filter(receiver=request.user).order_by('-creation_date')
-        serializer = MessageSerializerHeder(massages, many=True)
+        serializer = MessageSerializerHeader(massages, many=True)
         return Response(data=serializer.data)
 
 
@@ -116,10 +116,10 @@ class MessageDetail(APIView):
         operation_description='all the detail about the requested message. the message tagged as "read"',
     )
     def get(self, request, pk, format=None):
-        massage = self.get_massage(request, pk)
-        serializer = MessageSerializer(massage)
-        massage.read = True
-        massage.save()
+        message = self.get_massage(request, pk)
+        serializer = MessageSerializer(message)
+        message.read = True
+        message.save()
         return Response(data=serializer.data)
 
     @swagger_auto_schema(
@@ -132,15 +132,15 @@ class MessageDetail(APIView):
         operation_description='Delete specific message',
     )
     def delete(self, request, pk, format=None):
-        massage = self.get_massage(request, pk)
-        massage.delete()
+        message = self.get_massage(request, pk)
+        message.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class UnreadMessageList(APIView):
     @swagger_auto_schema(
         responses={
-            '200': openapi.Response('Json of all the unread messages', MessageSerializerHeder),
+            '200': openapi.Response('Json of all the unread messages', MessageSerializerHeader),
             '400': 'Bad Request'
         },
         permission_classes=[permissions.IsAuthenticated],
@@ -149,5 +149,5 @@ class UnreadMessageList(APIView):
     )
     def get(self, request, format=None):
         massages = Message.objects.filter(receiver=request.user, read=False).order_by('-creation_date')
-        serializer = MessageSerializerHeder(massages, many=True)
+        serializer = MessageSerializerHeader(massages, many=True)
         return Response(data=serializer.data)
