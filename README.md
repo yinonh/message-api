@@ -50,7 +50,7 @@ Message api is a 5 days exercise to learn, create and deploy django REST API
 
 - [Heroku](https://django-rest-message-api.herokuapp.com/)
 - [Docs](https://django-rest-message-api.herokuapp.com/doc)
-- [Postman file](https://file.io/OVp3LK8o3Ui5)
+- [Postman file](https://filebin.net/vxa1qq6xp5sryykg)
 
 
 [Back To The Top](#message-api)
